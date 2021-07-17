@@ -15,20 +15,28 @@ fetch("./samples.json")
 
         let metadata = data.metadata;
         console.log(metadata);  
+        console.log(metadata.id);
         
         let samples = data.samples;
         console.log(samples);
 
         let namesList = [];
-
         for (let i = 0; i < names.length; i++) {
-            namesList.push(i);
+            namesList.push(names[i]);
         }
-
         console.log(namesList);
         
-        let select = document.getElementById('selDataset');
-        
+        // let metadataList = [];
+        // for (let i = 0; i < metadata.length; i++) {
+        //     metadataList.push(i);
+        // }
+        // console.log(metadataList);
+
+
+        let select = document.getElementById("selDataset");
+    
+        // Dropdown Menu Options
+
         for (let i = 0; i < namesList.length; i++) {
             let option = namesList[i];
             let elect = document.createElement("option");
@@ -36,7 +44,26 @@ fetch("./samples.json")
             elect.value = option;
             select.appendChild(elect);
         }
-
+        
+        // Update Metadata
+        d3.selectAll("#selDataset").on("click", function () {
+            console.log(this.value);
+            
+            for (let i = 0; i < metadata.length; i++) {
+                if (metadata.id == this.value) {
+                    console.log("id");
+                } else {
+                    console.log("no");
+                }
+                
+            }
+            
+            //console.log(metadata.age, i.bbtype, i.ethnicity, i.gender, i.location, i.wfreq);
+        })
+            
+            
+        
+        
         
     });
 
