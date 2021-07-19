@@ -25,14 +25,6 @@ fetch("./samples.json")
             namesList.push(names[i]);
         }
         console.log(namesList);
-        
-
-
-        // let metadataList = [];
-        // for (let i = 0; i < metadata.length; i++) {
-        //     metadataList.push(i);
-        // }
-        // console.log(metadataList);
 
 
         let select = document.getElementById("selDataset");
@@ -49,23 +41,90 @@ fetch("./samples.json")
 
         // Update Metadata
         d3.selectAll("#selDataset").on("click", function () {
-            console.log(this.value);
             let selectedValue = this.value;
-            console.log(selectedValue);
-            
-            let result = metadata.find ( ( {id}) => id == selectedValue);
-            console.log(result);
+            let sample = metadata.find(({ id }) => id == selectedValue);
+            document.getElementById('sample-metadata').innerHTML = "";
 
+            function createMetadata(obj) {
+                this.AGE = obj.age;
+                this.BBTYPE = obj.bbtype;
+                this.ETHNICITY = obj.ethnicity;
+                this.GENDER = obj.gender;
+                this.LOCATION = obj.location;
+                this.WFREQ = obj.wfreq;
+                this.sample = obj.id;
+            }
+            let sampleMetadata = new createMetadata(sample);
+            // console.log(sampleMetadata);
+
+            for (let property in sampleMetadata) {
+                console.log(`${property}: ${sampleMetadata[property]}`);
+            }
+
+            // document.querySelector(".panel_body").innerHTML = sampleMetadata;
+            console.log(sampleMetadata);
+
+
+            for (let property in sampleMetadata) {
+
+                let json = (`${property}: ${sampleMetadata[property]}`);
+                document.getElementById('sample-metadata').innerHTML += '<br>' + json;
+                json = '';
+
+            }
+
+            // Bar Chart
+            let samplesID = samples.find(({ id }) => id == selectedValue);
+            document.getElementById("bar").innerHTML = "";
+            // console.log(samplesID);
+
+            let id = samplesID.id;
+            let otuIds = samplesID.otu_ids;
+            let sampleValues = samplesID.sample_values;
+            let otuLabels = samplesID.otu_labels;
+
+            otuIds = otuIds.slice([0], [10]);
+            sampleValues = sampleValues.slice([0], [10]);
+            otuLabels = otuLabels.slice([0], [10]);
+
+            console.log(otuIds);
+            console.log(sampleValues);
+            console.log(otuLabels);
+
+            
+            let chartData = [];
+            for (let i = 0; i < sampleValues.length; i++) {
+                chartData.push({
+                    id : otuIds[i],
+                    sample : sampleValues[i],
+                    label : otuLabels[i]
+                });
+            }
+            console.log(chartData);
+            
            
-
-            
-        })
-
+            chartData = chartData.sort((firstItem, secondItem) => secondItem.sample - firstItem.sample);
+            console.log(chartData);
 
 
 
+            let trace1 = {
+                x: chartData.sample,
+                y: chartData.id,
+                type: "bar",
+                orientation: "h"
+            };
+            let otuData = [trace1]
+            let layout = {
+                title: "Top 10 OTUs"
+            };
+            let barchart = Plotly.newPlot("bar", otuData, layout);
+            // document.getElementById("bar").innerHTML = barchart;
+        }
 
-    });
+
+        )
+    })
 
 
 
