@@ -55,28 +55,21 @@ fetch("./samples.json")
                 this.sample = obj.id;
             }
             let sampleMetadata = new createMetadata(sample);
-            // console.log(sampleMetadata);
-
+           
             for (let property in sampleMetadata) {
                 console.log(`${property}: ${sampleMetadata[property]}`);
             }
 
-            // document.querySelector(".panel_body").innerHTML = sampleMetadata;
-            console.log(sampleMetadata);
-
-
             for (let property in sampleMetadata) {
-
                 let json = (`${property}: ${sampleMetadata[property]}`);
                 document.getElementById('sample-metadata').innerHTML += '<br>' + json;
                 json = '';
-
             }
 
             // Bar Chart
             let samplesID = samples.find(({ id }) => id == selectedValue);
             document.getElementById("bar").innerHTML = "";
-            // console.log(samplesID);
+            
 
             let id = samplesID.id;
             let otuIds = samplesID.otu_ids;
@@ -86,40 +79,41 @@ fetch("./samples.json")
             otuIds = otuIds.slice([0], [10]);
             sampleValues = sampleValues.slice([0], [10]);
             otuLabels = otuLabels.slice([0], [10]);
-
-            console.log(otuIds);
-            console.log(sampleValues);
-            console.log(otuLabels);
-
-            
+           
+            otuIds = otuIds.map(d => "OTU " + d);
+           
             let chartData = [];
             for (let i = 0; i < sampleValues.length; i++) {
                 chartData.push({
-                    id : otuIds[i],
-                    sample : sampleValues[i],
-                    label : otuLabels[i]
+                    sample: sampleValues[i],
+                    id: otuIds[i],
+                    label: otuLabels[i],
+                    
                 });
             }
-            console.log(chartData);
-            
            
-            chartData = chartData.sort((firstItem, secondItem) => secondItem.sample - firstItem.sample);
-            console.log(chartData);
-
-
-
+            let sortedChartData = chartData.sort((a, b) => (a.sample < b.sample) ? 1 : -1);
+            let reversedChartData = sortedChartData.reverse();
+            
             let trace1 = {
-                x: chartData.sample,
-                y: chartData.id,
+                x: reversedChartData.map(object => object.sample),
+                y: reversedChartData.map(object => object.id),
+                text: reversedChartData.map(object => object.label),
                 type: "bar",
-                orientation: "h"
+                orientation: "h",
             };
-            let otuData = [trace1]
+                       
+            let otuData = [trace1];
             let layout = {
-                title: "Top 10 OTUs"
+                title: "Top 10 OTUs",
+                yaxis: {
+                    range: "nonnegative",
+                    
+                }             
+               
             };
-            let barchart = Plotly.newPlot("bar", otuData, layout);
-            // document.getElementById("bar").innerHTML = barchart;
+            Plotly.newPlot("bar", otuData, layout);
+
         }
 
 
