@@ -1,3 +1,7 @@
+---
+permalink: /StarterCode/index.html
+---
+
 # Plotly_Homework - Belly Button Biodiversity
 
 ![Bacteria by filterforge.com](Images/bacteria.jpg)
