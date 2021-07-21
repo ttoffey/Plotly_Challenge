@@ -165,16 +165,7 @@ fetch("./samples.json")
                     gauge: {
                         axis: {
                             range: [0, 9]},
-                        steps: [
-                            {range: [0, 1], color: 'white'},
-                            {range: [1, 2], color: 'eggshell'},
-                            {range: [2, 3], color: 'lightbrown'},
-                            {range: [3, 4], color: 'brown'},
-                            {range: [4, 5], color: 'limegreen'},
-                            {range: [6, 7], color: 'lightgreen'},
-                            {range: [7, 8], color: 'green'},
-                            {range: [8, 9], color: 'darkgreen'}
-                        ],
+                      
                     },
                     colorscale: "Earth",
                     value: wfreq,
