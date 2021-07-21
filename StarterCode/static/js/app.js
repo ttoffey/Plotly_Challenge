@@ -55,7 +55,7 @@ fetch("./samples.json")
                 this.sample = obj.id;
             }
             let sampleMetadata = new createMetadata(sample);
-           
+
             for (let property in sampleMetadata) {
                 console.log(`${property}: ${sampleMetadata[property]}`);
             }
@@ -69,105 +69,128 @@ fetch("./samples.json")
             // Bar Chart
             let samplesID = samples.find(({ id }) => id == selectedValue);
             document.getElementById("bar").innerHTML = "";
-            
+
 
             let id = samplesID.id;
             let otuIds = samplesID.otu_ids;
             let sampleValues = samplesID.sample_values;
             let otuLabels = samplesID.otu_labels;
+            let wfreq = sampleMetadata.WFREQ;
+
 
             otuIds = otuIds.slice([0], [10]);
             sampleValues = sampleValues.slice([0], [10]);
             otuLabels = otuLabels.slice([0], [10]);
-           
-            otuIds = otuIds.map(d => "OTU " + d);
-           
+
+            let barOtuIds = otuIds.map(d => "OTU " + d);
+
             let chartData = [];
             for (let i = 0; i < sampleValues.length; i++) {
                 chartData.push({
                     sample: sampleValues[i],
-                    id: otuIds[i],
+                    id: barOtuIds[i],
                     label: otuLabels[i],
-                    
+
                 });
             }
-           
+
             let sortedChartData = chartData.sort((a, b) => (a.sample < b.sample) ? 1 : -1);
             let reversedChartData = sortedChartData.reverse();
-            
-            let trace1 = {
+
+            let trace = {
                 x: reversedChartData.map(object => object.sample),
                 y: reversedChartData.map(object => object.id),
                 text: reversedChartData.map(object => object.label),
                 type: "bar",
                 orientation: "h",
             };
-                       
-            let otuData = [trace1];
+
+            let otuData = [trace];
             let layout = {
                 title: "Top 10 OTUs",
                 yaxis: {
                     range: "nonnegative",
-                    
-                }             
-               
+                }
+
             };
             Plotly.newPlot("bar", otuData, layout);
 
-        }
+            // Bubble Chart
+
+            let bubbleChartData = [];
+            for (let i = 0; i < sampleValues.length; i++) {
+                bubbleChartData.push({
+                    sample: sampleValues[i],
+                    id: otuIds[i],
+                    label: otuLabels[i],
+
+                });
+            }
+
+            let trace1 = {
+                x: bubbleChartData.map(object => object.id),
+                y: bubbleChartData.map(object => object.sample),
+                text: bubbleChartData.map(object => object.label),
+                mode: 'markers',
+                marker: {
+                    size: bubbleChartData.map(object => object.sample),
+                    color: bubbleChartData.map(object => object.id),
+
+                }
+            };
+
+            console.log(wfreq);
+
+            let bubbleData = [trace1];
+            let layout1 = {
+                xaxis: {
+                    title: "OTU IDS",
+                },
+                showlegend: false,
+                height: 600,
+                width: 1000,
+            };
+
+            Plotly.newPlot("bubble", bubbleData, layout1);
+
+            // Gauge
+
+            let gaugeData = [
+                {
+                    mode: "number+delta+gauge",
+                    // domain: { x: [0, 9], y: [1, 9] },
+                    // colorway: ['#f3cec9', '#e7a4b6', '#cd7eaf', '#a262a9', '#6f4d96', '#3d3b72', '#182844'],
+                    colorscale: 'Earth',
+                    delta: {reference: 380},
+                    gauge: {
+                        axis: {
+                            range: [0, 9]},
+                        steps: [
+                            {range: [0, 1], color: 'white'},
+                            {range: [1, 2], color: 'eggshell'},
+                            {range: [2, 3], color: 'lightbrown'},
+                            {range: [3, 4], color: 'brown'},
+                            {range: [4, 5], color: 'limegreen'},
+                            {range: [6, 7], color: 'lightgreen'},
+                            {range: [7, 8], color: 'green'},
+                            {range: [8, 9], color: 'darkgreen'}
+                        ],
+                    },
+                    colorscale: "Earth",
+                    value: wfreq,
+                    title: { text: "Belly Button Washing Frequency" },
+                    type: "indicator",
+                    mode: "gauge+number"
+                }
+            ];
+
+            var layout2 = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+            Plotly.newPlot('gauge', gaugeData, layout2);
+
+        });
+    });
 
 
-        )
-    })
 
-
-
-
-// Read json data
-
-// Parse and filter data to get sample names
-
-// Add dropdown option for each sample
-
-// Call functions below using the first sample to build metadata and initial plots
-
-
-
-// Define a function that will create metadata for given sample
-function buildMetadata(sample) {
-
-    // Read the json data
-
-    // Parse and filter the data to get the sample's metadata
-
-    // Specify the location of the metadata and update it
-
-}
-
-// Define a function that will create charts for given sample
-function buildCharts(sample) {
-
-    // Read the json data
-
-    // Parse and filter the data to get the sample's OTU data
-    // Pay attention to what data is required for each chart
-
-    // Create bar chart in correct location
-
-    // Create bubble chart in correct location
-
-}
-
-
-function optionChanged(sample) {
-    // The parameter being passed in this function is new sample id from dropdown menu
-
-    // Update metadata with newly selected sample
-
-    // Update charts with newly selected sample
-
-}
-
-// Initialize dashboard on page load
 init();
 
